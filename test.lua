@@ -24,6 +24,9 @@ local RageTab = Window:CreateTab("Rage", "crosshair")
 local VisualsTab = Window:CreateTab("Visuals", "eye")
 local LocalTab = Window:CreateTab("Local", "user-round")
 
+-- Все переменные и функции здесь...
+-- [ВСТАВЬТЕ СЮДА ВЕСЬ ВАШ КОД С ФУНКЦИЯМИ И ПЕРЕМЕННЫМИ]
+-- ... до конца кода с функциями
 -- Silent Aim переменные
 local silentAimEnabled = false
 local silentAimFOV = 100
@@ -207,82 +210,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Добавляем Silent Aim во вкладку Rage
-local SilentAimToggle = RageTab:CreateToggle({
-    Name = "Silent Aim",
-    CurrentValue = false,
-    Flag = "SilentAimToggle",
-    Callback = function(Value)
-        silentAimEnabled = Value
-        print("Silent Aim: " .. (Value and "ON" or "OFF"))
-    end,
-})
-
-local AutoShootToggle = RageTab:CreateToggle({
-    Name = "Auto Shoot",
-    CurrentValue = false,
-    Flag = "AutoShootToggle",
-    Callback = function(Value)
-        autoShootEnabled = Value
-        if Value then
-            spawn(autoShoot) -- Запускаем авто-стрельбу
-        end
-        print("Auto Shoot: " .. (Value and "ON" or "OFF"))
-    end,
-})
-
-local SilentAimFOVSlider = RageTab:CreateSlider({
-    Name = "Silent Aim FOV",
-    Range = {50, 300},
-    Increment = 10,
-    Suffix = "Units",
-    CurrentValue = silentAimFOV,
-    Flag = "SilentAimFOV",
-    Callback = function(Value)
-        silentAimFOV = Value
-        silentAimFovCircle.Radius = Value
-    end,
-})
-
-local SilentAimHitChanceSlider = RageTab:CreateSlider({
-    Name = "Hit Chance",
-    Range = {0, 100},
-    Increment = 1,
-    Suffix = "%",
-    CurrentValue = silentAimHitChance,
-    Flag = "SilentAimHitChance",
-    Callback = function(Value)
-        silentAimHitChance = Value
-    end,
-})
-
-local AutoShootDelaySlider = RageTab:CreateSlider({
-    Name = "Auto Shoot Delay",
-    Range = {0.05, 0.5},
-    Increment = 0.01,
-    Suffix = "sec",
-    CurrentValue = autoShootDelay,
-    Flag = "AutoShootDelay",
-    Callback = function(Value)
-        autoShootDelay = Value
-    end,
-})
-
-local TargetPartDropdown = RageTab:CreateDropdown({
-    Name = "Target Part",
-    Options = {"Head", "HumanoidRootPart"},
-    CurrentOption = silentAimTargetPart,
-    Flag = "TargetPartDropdown",
-    Callback = function(Option)
-        silentAimTargetPart = Option
-    end,
-})
-
--- Запускаем авто-стрельбу в отдельном потоке
-spawn(autoShoot)
-
-
--- rage | hitbox
 local hitboxExpanderEnabled = false
 local hitboxSize = 1.5
 local originalSizes = {}
@@ -327,52 +254,6 @@ local function resetPlayerHitboxes(player)
         end
     end
 end
-
--- Добавляем этот код в секцию RageTab (после AutoShootDelaySlider)
-
-local HitboxExpanderToggle = RageTab:CreateToggle({
-    Name = "Hitbox Expander",
-    CurrentValue = false,
-    Flag = "HitboxExpanderToggle",
-    Callback = function(Value)
-        hitboxExpanderEnabled = Value
-        updateHitboxes()
-        print("Hitbox Expander: " .. (Value and "ON" or "OFF"))
-    end,
-})
-
-local HitboxSizeSlider = RageTab:CreateSlider({
-    Name = "Hitbox Size",
-    Range = {1.0, 10.0},
-    Increment = 0.1,
-    Suffix = "x",
-    CurrentValue = hitboxSize,
-    Flag = "HitboxSizeSlider",
-    Callback = function(Value)
-        hitboxSize = Value
-        if hitboxExpanderEnabled then
-            updateHitboxes()
-        end
-    end,
-})
-
-local HitboxPartsDropdown = RageTab:CreateDropdown({
-    Name = "Hitbox Parts",
-    Options = {"Head", "HumanoidRootPart", "Both"},
-    CurrentOption = "Head",
-    Flag = "HitboxPartsDropdown",
-    Callback = function(Option)
-        if Option == "Both" then
-            hitboxParts = {"Head", "HumanoidRootPart"}
-        else
-            hitboxParts = {Option}
-        end
-        
-        if hitboxExpanderEnabled then
-            updateHitboxes()
-        end
-    end,
-})
 
 -- Добавляем обновление хитбоксов в RenderStepped
 RunService.RenderStepped:Connect(function()
@@ -462,15 +343,6 @@ end)
 Mouse.Button2Up:Connect(function()
     aimbotEnabled = false
 end)
-
-local AimToggle = LegitTab:CreateToggle({
-    Name = "Toggle Aimbot",
-    Callback = function()
-        aimbotEnabled = not aimbotEnabled
-    end,
-})
-
--- Заменяем всю секцию Visuals | Chams на этот исправленный код:
 
 --- Visuals | Chams
 local espEnabled = false
@@ -577,19 +449,6 @@ local function stopESPUpdate()
     espHighlights = {}
 end
 
-local ESPToggle = VisualsTab:CreateToggle({
-    Name = "Toggle Chams",
-    Callback = function(Value)
-        espEnabled = Value
-        if Value then
-            startESPUpdate()
-            print("ESP: ON")
-        else
-            stopESPUpdate()
-            print("ESP: OFF")
-        end
-    end,
-})
 
 -- Обработчики для игроков
 Players.PlayerAdded:Connect(function(player)
@@ -651,6 +510,167 @@ local speedHackEnabled = false
 local speedHackConnection = nil
 local currentSpeed = 16
 
+local thirdPersonEnabled = false
+local defaultZoom = 12.5
+local thirdPersonConnection = nil
+
+local transparencyEnabled = false
+local transparencyValue = 0.7
+local transparencyConnection = nil
+
+local spinEnabled = false
+local spinConnection = nil
+local spinSpeed = 10
+-- ТОЛЬКО ПОСЛЕ ВСЕХ ФУНКЦИЙ СОЗДАЕМ ЭЛЕМЕНТЫ GUI:
+
+-- Legit Tab
+local AimToggle = LegitTab:CreateToggle({
+    Name = "Toggle Aimbot",
+    Callback = function()
+        aimbotEnabled = not aimbotEnabled
+    end,
+})
+
+-- Rage Tab
+local SilentAimToggle = RageTab:CreateToggle({
+    Name = "Silent Aim",
+    CurrentValue = false,
+    Flag = "SilentAimToggle",
+    Callback = function(Value)
+        silentAimEnabled = Value
+        print("Silent Aim: " .. (Value and "ON" or "OFF"))
+    end,
+})
+
+local AutoShootToggle = RageTab:CreateToggle({
+    Name = "Auto Shoot",
+    CurrentValue = false,
+    Flag = "AutoShootToggle",
+    Callback = function(Value)
+        autoShootEnabled = Value
+        if Value then
+            spawn(autoShoot)
+        end
+        print("Auto Shoot: " .. (Value and "ON" or "OFF"))
+    end,
+})
+
+local WallbangToggle = RageTab:CreateToggle({
+    Name = "Wallbang (Through Walls)",
+    CurrentValue = false,
+    Flag = "WallbangToggle",
+    Callback = function(Value)
+        wallbangEnabled = Value
+        print("Wallbang: " .. (Value and "ON" or "OFF"))
+    end,
+})
+
+local SilentAimFOVSlider = RageTab:CreateSlider({
+    Name = "Silent Aim FOV",
+    Range = {50, 300},
+    Increment = 10,
+    Suffix = "Units",
+    CurrentValue = silentAimFOV,
+    Flag = "SilentAimFOV",
+    Callback = function(Value)
+        silentAimFOV = Value
+        silentAimFovCircle.Radius = Value
+    end,
+})
+
+local SilentAimHitChanceSlider = RageTab:CreateSlider({
+    Name = "Hit Chance",
+    Range = {0, 100},
+    Increment = 1,
+    Suffix = "%",
+    CurrentValue = silentAimHitChance,
+    Flag = "SilentAimHitChance",
+    Callback = function(Value)
+        silentAimHitChance = Value
+    end,
+})
+
+local AutoShootDelaySlider = RageTab:CreateSlider({
+    Name = "Auto Shoot Delay",
+    Range = {0.05, 0.5},
+    Increment = 0.01,
+    Suffix = "sec",
+    CurrentValue = autoShootDelay,
+    Flag = "AutoShootDelay",
+    Callback = function(Value)
+        autoShootDelay = Value
+    end,
+})
+
+local TargetPartDropdown = RageTab:CreateDropdown({
+    Name = "Target Part",
+    Options = {"Head", "HumanoidRootPart"},
+    CurrentOption = silentAimTargetPart,
+    Flag = "TargetPartDropdown",
+    Callback = function(Option)
+        silentAimTargetPart = Option
+    end,
+})
+
+local HitboxExpanderToggle = RageTab:CreateToggle({
+    Name = "Hitbox Expander",
+    CurrentValue = false,
+    Flag = "HitboxExpanderToggle",
+    Callback = function(Value)
+        hitboxExpanderEnabled = Value
+        updateHitboxes()
+        print("Hitbox Expander: " .. (Value and "ON" or "OFF"))
+    end,
+})
+
+local HitboxSizeSlider = RageTab:CreateSlider({
+    Name = "Hitbox Size",
+    Range = {1.0, 10.0},
+    Increment = 0.1,
+    Suffix = "x",
+    CurrentValue = hitboxSize,
+    Flag = "HitboxSizeSlider",
+    Callback = function(Value)
+        hitboxSize = Value
+        if hitboxExpanderEnabled then
+            updateHitboxes()
+        end
+    end,
+})
+
+local HitboxPartsDropdown = RageTab:CreateDropdown({
+    Name = "Hitbox Parts",
+    Options = {"Head", "HumanoidRootPart", "Both"},
+    CurrentOption = "Head",
+    Flag = "HitboxPartsDropdown",
+    Callback = function(Option)
+        if Option == "Both" then
+            hitboxParts = {"Head", "HumanoidRootPart"}
+        else
+            hitboxParts = {Option}
+        end
+        if hitboxExpanderEnabled then
+            updateHitboxes()
+        end
+    end,
+})
+
+-- Visuals Tab
+local ESPToggle = VisualsTab:CreateToggle({
+    Name = "Toggle Chams",
+    Callback = function(Value)
+        espEnabled = Value
+        if Value then
+            startESPUpdate()
+            print("ESP: ON")
+        else
+            stopESPUpdate()
+            print("ESP: OFF")
+        end
+    end,
+})
+
+-- Local Tab
 local SpeedSlider = LocalTab:CreateSlider({
     Name = "WalkSpeed",
     Range = {16, 100},
@@ -678,11 +698,7 @@ local SpeedSlider = LocalTab:CreateSlider({
     end,
 })
 
-local thirdPersonEnabled = false
-local defaultZoom = 12.5
-local thirdPersonConnection = nil
-
-local ThirdPersonButton = LocalTab:CreateButton({
+local ThirdPersonToggle = LocalTab:CreateToggle({
     Name = "ThirdPerson (Stable)",
     Callback = function()
         thirdPersonEnabled = not thirdPersonEnabled
@@ -712,29 +728,7 @@ local ThirdPersonButton = LocalTab:CreateButton({
     end,
 })
 
-local CameraZoomSlider = LocalTab:CreateSlider({
-    Name = "Camera Distance (Stable)",
-    Range = {5, 25},
-    Increment = 0.5,
-    Suffix = "Studs",
-    CurrentValue = 12.5,
-    Flag = "CameraZoomSlider",
-    Callback = function(Value)
-        local player = game:GetService("Players").LocalPlayer
-        defaultZoom = Value
-        
-        if thirdPersonEnabled then
-            player.CameraMaxZoomDistance = Value
-            player.CameraMinZoomDistance = Value
-        end
-    end,
-})
-
-local transparencyEnabled = false
-local transparencyValue = 0.7
-local transparencyConnection = nil
-
-local TransparencyButton = LocalTab:CreateButton({
+local TransparencyToggle = LocalTab:CreateToggle({
     Name = "Local Transparency (Stable)",
     Callback = function()
         transparencyEnabled = not transparencyEnabled
@@ -790,23 +784,7 @@ local TransparencyButton = LocalTab:CreateButton({
     end,
 })
 
-local TransparencySlider = LocalTab:CreateSlider({
-    Name = "Transparency (Stable)",
-    Range = {0, 1},
-    Increment = 0.1,
-    Suffix = "Alpha",
-    CurrentValue = 0.7,
-    Flag = "TransparencySlider",
-    Callback = function(Value)
-        transparencyValue = Value
-    end,
-})
-
-local spinEnabled = false
-local spinConnection = nil
-local spinSpeed = 10
-
-local SpinButton = LocalTab:CreateButton({
+local SpinToggle = LocalTab:CreateToggle({
     Name = "Spin (Stable)",
     Callback = function()
         spinEnabled = not spinEnabled
@@ -841,7 +819,7 @@ local SpinButton = LocalTab:CreateButton({
                         spinConnection:Disconnect()
                         spinConnection = nil
                     end
-                end
+                    end
             end)
         else
             if spinConnection then
@@ -857,14 +835,8 @@ local SpinButton = LocalTab:CreateButton({
     end,
 })
 
-local SpinSpeedSlider = LocalTab:CreateSlider({
-    Name = "Spin Speed",
-    Range = {1, 50},
-    Increment = 1,
-    Suffix = "Speed",
-    CurrentValue = 10,
-    Flag = "SpinSpeedSlider",
-    Callback = function(Value)
-        spinSpeed = Value
-    end,
-})
+-- Запускаем системы
+spawn(autoShoot)
+setupWallbang()
+
+print("GUI loaded successfully! All tabs should be visible now.")
